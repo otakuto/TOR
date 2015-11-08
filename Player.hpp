@@ -1,58 +1,86 @@
 #pragma once
-#include <memory>
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 #include <GL/glu.h>
+#include <list>
+#include <memory>
 #include "GameObject.hpp"
 #include "Option.hpp"
 #include "Key.hpp"
+#include "Damage.hpp"
 
 class Player
 :
 public GameObject
 {
 private:
-	GLdouble position[3];
-
+	std::shared_ptr<GLFWwindow> window;
+	std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist;
 	std::shared_ptr<Option const> const option;
+	std::array<int, 3> position;
+	int hp;
+	int level;
+	int speed;
+	int jumpTime;
+	int jumpHight;
+
 public:
-	Player(std::shared_ptr<Option const> const option)
+	Player(std::shared_ptr<GLFWwindow> window, std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist, std::shared_ptr<Option const> const option)
 	:
+	window(window),
+	gameObjectlist(gameObjectlist),
+	option(option),
 	position(),
-	option(option)
+	hp(),
+	level(),
+	speed(2),
+	jumpTime(1),
+	jumpHight()
 	{
 	}
 
 	void run()
 	{
-		if (glfwGetKey(option->keyMap.at(Key::Up)))
+		if (glfwGetKey(window.get(), option->keyMap.at(Key::Up)))
 		{
-			++position[1];
+			//position[1] += speed;
 		}
-		if (glfwGetKey(option->keyMap.at(Key::Down)))
+		if (glfwGetKey(window.get(), option->keyMap.at(Key::Down)))
 		{
-			--position[1];
+			//position[1] -= speed;
 		}
-		if (glfwGetKey(option->keyMap.at(Key::Right)))
+		if (glfwGetKey(window.get(), option->keyMap.at(Key::Right)))
 		{
-			++position[0];
+			position[0] += speed;
 		}
-		if (glfwGetKey(option->keyMap.at(Key::Left)))
+		if (glfwGetKey(window.get(), option->keyMap.at(Key::Left)))
 		{
-			--position[0];
+			position[0] -= speed;
 		}
-		if (glfwGetKey(option->keyMap.at(Key::Jump)))
-		{
-		}
-		if (glfwGetKey(option->keyMap.at(Key::ActionA)))
+		if (glfwGetKey(window.get(), option->keyMap.at(Key::Jump)))
 		{
 		}
-		if (glfwGetKey(option->keyMap.at(Key::ActionB)))
+		{
+			static int time = 0;
+			if (time <= 0)
+			{
+				if (glfwGetKey(window.get(), option->keyMap.at(Key::ActionA)))
+				{
+				gameObjectlist->emplace_back(std::make_shared<Damage>(position, false));
+				time = 100;
+				}
+			}
+			else
+			{
+				--time;
+			}
+		}
+		if (glfwGetKey(window.get(), option->keyMap.at(Key::ActionB)))
 		{
 		}
-		if (glfwGetKey(option->keyMap.at(Key::ActionC)))
+		if (glfwGetKey(window.get(), option->keyMap.at(Key::ActionC)))
 		{
 		}
-		if (glfwGetKey(option->keyMap.at(Key::ActionD)))
+		if (glfwGetKey(window.get(), option->keyMap.at(Key::ActionD)))
 		{
 		}
 	}
@@ -67,7 +95,7 @@ public:
 			{0, 16, 0}
 		};
 		static GLubyte const color[3] = {0xFF, 0xFF, 0xFF};
-		
+
 		glPushMatrix();
 		glTranslated(position[0], position[1], position[2]);
 		glColor3ubv(color);

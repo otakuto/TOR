@@ -1,5 +1,5 @@
 #pragma once
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 #include <unordered_map>
 #include "Key.hpp"
 
@@ -17,10 +17,10 @@ public:
 		keyMap[Key::Right] = GLFW_KEY_RIGHT;
 		keyMap[Key::Left] = GLFW_KEY_LEFT;
 		keyMap[Key::Jump] = GLFW_KEY_SPACE;
-		keyMap[Key::ActionA] = 'z';
-		keyMap[Key::ActionB] = 'x';
-		keyMap[Key::ActionC] = 'c';
-		keyMap[Key::ActionD] = 'v';
+		keyMap[Key::ActionA] = 'Z';
+		keyMap[Key::ActionB] = 'X';
+		keyMap[Key::ActionC] = 'C';
+		keyMap[Key::ActionD] = 'V';
 	}
 };
 

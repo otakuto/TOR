@@ -9,17 +9,18 @@ public GameObject
 {
 public:
 	std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist;
-	boost::coroutines::symmetric_coroutine<void>::call_type coroutine;
 
 	std::array<int, 3> position;
 	int hp;
 
-	Enemy(std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist, std::function<void(boost::coroutines::symmetric_coroutine<void>::yield_type & yield, Enemy & enemy)> coroutine)
+	boost::coroutines::symmetric_coroutine<void>::call_type coroutine;
+
+	Enemy(std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist, std::array<int, 3> position, std::function<void(boost::coroutines::symmetric_coroutine<void>::yield_type & yield, Enemy & enemy)> coroutine)
 	:
 	gameObjectlist(gameObjectlist),
-	coroutine([&,coroutine=coroutine](auto & yield){coroutine(yield, *this);}),
-	position(),
-	hp()
+	position(position),
+	hp(),
+	coroutine([&,coroutine=coroutine](auto & yield){coroutine(yield, *this);})
 	{
 	}
 

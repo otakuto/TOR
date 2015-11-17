@@ -12,7 +12,7 @@ class Player
 :
 public GameObject
 {
-private:
+public:
 	std::shared_ptr<GLFWwindow> window;
 	std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist;
 	std::shared_ptr<Option const> const option;
@@ -38,25 +38,6 @@ public:
 	jumpTime(1),
 	jumpHight()
 	{
-		constexpr std::array<std::array<GLdouble, 3>, 4> vertex =
-		{{
-			{{0, 0, 0}},
-			{{8, 0, 0}},
-			{{8, 16, 0}},
-			{{0, 16, 0}}
-		}};
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-		// 頂点バッファオブジェクトを作成する
-		GLuint vbo;
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertex), vertex.data(), GL_STATIC_DRAW);
-
-		// 頂点バッファオブジェクトにシェーダ内の変数vertexCoodrinateを結びつける
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, sizeof(double)*3, 0);
-
 	}
 
 	void run()
@@ -108,9 +89,6 @@ public:
 
 	void draw() const
 	{
-		//glBindVertexArray(vao);
-		//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
 		static GLdouble const vertex[][3] =
 		{
 			{0, 0, 0},

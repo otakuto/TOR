@@ -207,8 +207,8 @@ int main()
 		glDrawArrays(GL_LINE_LOOP, 0, 3);
 		glUseProgram(0);
 
-		//game.run();
-		//game.draw();
+		game.run();
+		game.draw();
 		glfwSwapBuffers(window.get());
 		glfwPollEvents();
 	}

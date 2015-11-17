@@ -9,15 +9,15 @@ public GameObject
 {
 public:
 	std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist;
-	boost::coroutines::symmetric_coroutine<void>::call_type r;
+	boost::coroutines::symmetric_coroutine<void>::call_type coroutine;
 
 	std::array<int, 3> position;
 	int hp;
 
-	Enemy(std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist, std::function<void(boost::coroutines::symmetric_coroutine<void>::yield_type & yield, Enemy & enemy)> r)
+	Enemy(std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist, std::function<void(boost::coroutines::symmetric_coroutine<void>::yield_type & yield, Enemy & enemy)> coroutine)
 	:
 	gameObjectlist(gameObjectlist),
-	r([&,r=r](auto & y){r(y, *this);}),
+	coroutine([&,coroutine=coroutine](auto & yield){coroutine(yield, *this);}),
 	position(),
 	hp()
 	{
@@ -25,27 +25,27 @@ public:
 
 	void run()
 	{
-		r();
+		coroutine();
 	}
 
 	void draw() const
 	{
-		static GLdouble const vertex[][3] =
-		{
-			{0, 0, 0},
-			{32, 0, 0},
-			{32, 32, 0},
-			{0, 32, 0}
-		};
-		static GLubyte const color[3] = {0x80, 0x70, 0x60};
+		constexpr std::array<std::array<GLdouble, 3>, 4> vertex
+		{{
+			{{0, 0, 0}},
+			{{32, 0, 0}},
+			{{32, 32, 0}},
+			{{0, 32, 0}}
+		}};
+		constexpr std::array<GLubyte, 3> color = {{0x80, 0x70, 0x60}};
 
 		glPushMatrix();
 		glTranslated(position[0], position[1], position[2]);
-		glColor3ubv(color);
+		glColor3ubv(color.data());
 		glBegin(GL_QUADS);
 		for (auto && e : vertex)
 		{
-			glVertex3dv(e);
+			glVertex3dv(e.data());
 		}
 		glEnd();
 		glPopMatrix();

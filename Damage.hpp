@@ -16,7 +16,7 @@ private:
 public:
 	Damage(std::array<int, 3> position, bool isEnemy)
 	:
-	position{position},
+	position(position),
 	time(100),
 	point(),
 	isEnemy(isEnemy)

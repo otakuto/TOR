@@ -1,12 +1,14 @@
 #pragma once
 #include <GLFW/glfw3.h>
 #include <GL/glu.h>
+#include <eigen3/Eigen/Core>
 #include <list>
 #include <memory>
 #include "GameObject.hpp"
 #include "Option.hpp"
 #include "Key.hpp"
 #include "Damage.hpp"
+#include "Direction.hpp"
 
 class Player
 :
@@ -16,12 +18,13 @@ public:
 	std::shared_ptr<GLFWwindow> window;
 	std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist;
 	std::shared_ptr<Option const> const option;
-	std::array<int, 3> position;
+	Eigen::Vector3d position;
 	int hp;
 	int level;
 	int speed;
 	int jumpTime;
 	int jumpHight;
+	Direction direction;
 
 	GLuint vao;
 
@@ -31,12 +34,13 @@ public:
 	window(window),
 	gameObjectlist(gameObjectlist),
 	option(option),
-	position(),
+	position(0, 0, 0),
 	hp(),
 	level(),
 	speed(2),
 	jumpTime(1),
-	jumpHight()
+	jumpHight(),
+	direction(Direction::Right)
 	{
 	}
 
@@ -53,10 +57,12 @@ public:
 		if (glfwGetKey(window.get(), option->keyMap.at(Key::Right)))
 		{
 			position[0] += speed;
+			direction = Direction::Right;
 		}
 		if (glfwGetKey(window.get(), option->keyMap.at(Key::Left)))
 		{
 			position[0] -= speed;
+			direction = Direction::Left;
 		}
 		if (glfwGetKey(window.get(), option->keyMap.at(Key::Jump)))
 		{
@@ -67,7 +73,16 @@ public:
 			{
 				if (glfwGetKey(window.get(), option->keyMap.at(Key::ActionA)))
 				{
-					gameObjectlist->emplace_back(std::make_shared<Damage>(position, false));
+					gameObjectlist->emplace_back(std::make_shared<Damage>(position + Eigen::Vector3d(0, 4, 0), std::array<int, 2>{{4, 4}}, false, [direction=direction](auto & yield, Damage & damage)
+					{
+						int amount = (direction == Direction::Right) ? 4 : -4;
+						for (int time = 0; time < 60; ++time)
+						{
+							damage.position[0] += amount;
+							yield();
+						}
+						damage.enable = false;
+					}));
 					time = 100;
 				}
 			}
@@ -93,8 +108,8 @@ public:
 		{
 			{0, 0, 0},
 			{8, 0, 0},
-			{8, 16, 0},
-			{0, 16, 0}
+			{8, 8, 0},
+			{0, 8, 0}
 		};
 		static GLubyte const color[3] = {0xFF, 0xFF, 0xFF};
 

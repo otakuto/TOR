@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <GL/glu.h>
 #include <vector>
+#include <chrono>
 #include <iostream>
 #include <cmath>
 #include "Player.hpp"
@@ -150,9 +151,9 @@ int main()
 
 	static double faceVertexCoordinates[] =
 	{
-		0.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
+		0.0, 0.0, 0.0,
+		1.0, 0.0, 0.0,
+		1.0, 1.0, 0.0,
 	};
 
 	// 頂点配列オブジェクトを作成して設定する
@@ -183,7 +184,7 @@ int main()
 	glTranslated(-0.4, 0.1, 0);
 	glViewport(0, 0, mode->width, mode->height);
 	gluPerspective(90, static_cast<double>(mode->width) / static_cast<double>(mode->height), 1, 1024);
-	gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0);
+	gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
 
 	glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
 	for (auto e : matrix)
@@ -195,22 +196,30 @@ int main()
 
 	Game game(window);
 
+	std::chrono::high_resolution_clock::duration duration = std::chrono::high_resolution_clock::duration::zero();
 	while (!glfwWindowShouldClose(window.get()))
 	{
-		glClearColor(0x30 / static_cast<double>(0xFF), 0x40 / static_cast<double>(0xFF), 0x60 / static_cast<double>(0xFF), 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
-
-		glBindVertexArray(vao);
-		glUseProgram(program);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-		glUseProgram(0);
-
+		auto begin = std::chrono::high_resolution_clock::now();
 		game.run();
-		game.draw();
-		glfwSwapBuffers(window.get());
 		glfwPollEvents();
+		if (duration <= std::chrono::milliseconds(16))
+		{
+			glClearColor(0x30 / static_cast<double>(0xFF), 0x40 / static_cast<double>(0xFF), 0x60 / static_cast<double>(0xFF), 1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glEnable(GL_DEPTH_TEST);
+
+			glBindVertexArray(vao);
+			glUseProgram(program);
+			//glDrawArrays(GL_TRIANGLES, 0, 3);
+			glDrawArrays(GL_LINE_LOOP, 0, 3);
+			glUseProgram(0);
+
+			game.draw();
+			glfwSwapBuffers(window.get());
+		}
+		duration = std::chrono::high_resolution_clock::now() - begin;
+		while (std::chrono::high_resolution_clock::now() - begin <= std::chrono::milliseconds(16));
+		//std::cout << (std::chrono::high_resolution_clock::now() - begin).count() << std::endl;
 	}
 	glDeleteProgram(program);
 	glfwTerminate();

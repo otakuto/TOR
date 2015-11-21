@@ -1,5 +1,6 @@
 #pragma once
 #include <boost/coroutine/all.hpp>
+#include <eigen3/Eigen/Core>
 #include "GameObject.hpp"
 #include "Damage.hpp"
 
@@ -10,12 +11,12 @@ public GameObject
 public:
 	std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist;
 
-	std::array<int, 3> position;
+	Eigen::Vector3d position;
 	int hp;
 
 	boost::coroutines::symmetric_coroutine<void>::call_type coroutine;
 
-	Enemy(std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist, std::array<int, 3> position, std::function<void(boost::coroutines::symmetric_coroutine<void>::yield_type & yield, Enemy & enemy)> coroutine)
+	Enemy(std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist, Eigen::Vector3d position, std::function<void(boost::coroutines::symmetric_coroutine<void>::yield_type & yield, Enemy & enemy)> coroutine)
 	:
 	gameObjectlist(gameObjectlist),
 	position(position),

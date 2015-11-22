@@ -23,7 +23,7 @@ public:
 	int level;
 	int speed;
 	int jumpTime;
-	int jumpHight;
+	int jumpVelocity;
 	Direction direction;
 
 	GLuint vao;
@@ -39,7 +39,7 @@ public:
 	level(),
 	speed(2),
 	jumpTime(1),
-	jumpHight(),
+	jumpVelocity(256),
 	direction(Direction::Right)
 	{
 	}
@@ -64,9 +64,27 @@ public:
 			position[0] -= speed;
 			direction = Direction::Left;
 		}
+		{
+			static int time = 0;
+			if (position[1] > 0)
+			{
+				position[1] -= 9.8 * (time / 30.0) * (time / 30.0);
+				++time;
+			}
+			else
+			{
+				time = 0;
+			}
+		}
+
 		if (glfwGetKey(window.get(), option->keyMap.at(Key::Jump)))
 		{
+			position[1] += 8;
 		}
+		else
+		{
+		}
+
 		{
 			static int time = 0;
 			if (time <= 0)
@@ -76,14 +94,14 @@ public:
 					gameObjectlist->emplace_back(std::make_shared<Damage>(position + Eigen::Vector3d(0, 4, 0), std::array<int, 2>{{4, 4}}, false, [direction=direction](auto & yield, Damage & damage)
 					{
 						int amount = (direction == Direction::Right) ? 4 : -4;
-						for (int time = 0; time < 60; ++time)
+						for (int time = 0; time < 100; ++time)
 						{
 							damage.position[0] += amount;
 							yield();
 						}
 						damage.enable = false;
 					}));
-					time = 100;
+					time = 60;
 				}
 			}
 			else

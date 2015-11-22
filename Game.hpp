@@ -66,29 +66,26 @@ public:
 		{
 			while (true)
 			{
-				for (int i = 0; i < 25; ++i)
+				for (int i = 0; i < 120; ++i)
 				{
+					int amount = i / 60 + 1;
 					if (player->position[0] < enemy.position[0])
 					{
-						enemy.position[0] -= 3;
+						enemy.position[0] -= amount;
 					}
 					else
 					{
-						enemy.position[0] += 3;
+						enemy.position[0] += amount;
 					}
 
 					if (player->position[1] < enemy.position[1])
 					{
-						enemy.position[1] -= 3;
+						enemy.position[1] -= amount;
 					}
 					else
 					{
-						enemy.position[1] += 3;
+						enemy.position[1] += amount;
 					}
-					yield();
-				}
-				for (int i = 0; i < 25; ++i)
-				{
 					yield();
 				}
 			}

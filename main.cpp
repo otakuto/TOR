@@ -217,6 +217,11 @@ int main()
 			game.draw();
 			glfwSwapBuffers(window.get());
 		}
+		else
+		{
+			std::cout << duration.count() << std::endl;
+			std::cout << "skip" << std::endl;
+		}
 		duration = std::chrono::high_resolution_clock::now() - begin;
 		while (std::chrono::high_resolution_clock::now() - begin <= std::chrono::milliseconds(16));
 		//std::cout << (std::chrono::high_resolution_clock::now() - begin).count() << std::endl;

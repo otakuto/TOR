@@ -1,14 +1,15 @@
 #pragma once
 #include <list>
 #include <memory>
+#include <random>
+#include <iostream>
 #include <eigen3/Eigen/Core>
 #include "GameObject.hpp"
 #include "Player.hpp"
 #include "Damage.hpp"
 #include "Option.hpp"
 #include "Enemy.hpp"
-#include <iostream>
-#include <random>
+#include "Controller.hpp"
 
 class Game
 {
@@ -20,7 +21,9 @@ public:
 	:
 	gameObjectlist(std::make_shared<std::list<std::shared_ptr<GameObject>>>())
 	{
-		auto player = std::make_shared<Player>(window, gameObjectlist, std::make_shared<Option>());
+		auto controller = std::make_shared<Controller>(window, std::make_shared<Option>());
+		gameObjectlist->emplace_back(controller);
+		auto player = std::make_shared<Player>(gameObjectlist, controller);
 		gameObjectlist->emplace_back(player);
 		gameObjectlist->emplace_back(std::make_shared<Enemy>(gameObjectlist, Eigen::Vector3d(0, 0, 0), [](auto & yield, Enemy & enemy)
 		{

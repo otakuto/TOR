@@ -9,15 +9,15 @@
 #include "Key.hpp"
 #include "Damage.hpp"
 #include "Direction.hpp"
+#include "Controller.hpp"
 
 class Player
 :
 public GameObject
 {
 public:
-	std::shared_ptr<GLFWwindow> window;
 	std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist;
-	std::shared_ptr<Option const> const option;
+	std::shared_ptr<Controller> controller;
 	Eigen::Vector3d position;
 	int hp;
 	int level;
@@ -29,11 +29,10 @@ public:
 	GLuint vao;
 
 public:
-	Player(std::shared_ptr<GLFWwindow> window, std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist, std::shared_ptr<Option const> const option)
+	Player(std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist, std::shared_ptr<Controller> controller)
 	:
-	window(window),
 	gameObjectlist(gameObjectlist),
-	option(option),
+	controller(controller),
 	position(0, 0, 0),
 	hp(),
 	level(),
@@ -46,20 +45,20 @@ public:
 
 	void run()
 	{
-		if (glfwGetKey(window.get(), option->keyMap.at(Key::Up)))
+		if (controller->at(Key::Up))
 		{
 			position[1] += speed;
 		}
-		if (glfwGetKey(window.get(), option->keyMap.at(Key::Down)))
+		if (controller->at(Key::Down))
 		{
 			position[1] -= speed;
 		}
-		if (glfwGetKey(window.get(), option->keyMap.at(Key::Right)))
+		if (controller->at(Key::Right))
 		{
 			position[0] += speed;
 			direction = Direction::Right;
 		}
-		if (glfwGetKey(window.get(), option->keyMap.at(Key::Left)))
+		if (controller->at(Key::Left))
 		{
 			position[0] -= speed;
 			direction = Direction::Left;
@@ -77,7 +76,7 @@ public:
 			}
 		}
 
-		if (glfwGetKey(window.get(), option->keyMap.at(Key::Jump)))
+		if (controller->at(Key::Jump))
 		{
 			position[1] += 8;
 		}
@@ -89,7 +88,7 @@ public:
 			static int time = 0;
 			if (time <= 0)
 			{
-				if (glfwGetKey(window.get(), option->keyMap.at(Key::ActionA)))
+				if (controller->at(Key::ActionA))
 				{
 					gameObjectlist->emplace_back(std::make_shared<Damage>(position + Eigen::Vector3d(0, 4, 0), std::array<int, 2>{{4, 4}}, false, [direction=direction](auto & yield, Damage & damage)
 					{
@@ -109,13 +108,13 @@ public:
 				--time;
 			}
 		}
-		if (glfwGetKey(window.get(), option->keyMap.at(Key::ActionB)))
+		if (controller->at(Key::ActionB))
 		{
 		}
-		if (glfwGetKey(window.get(), option->keyMap.at(Key::ActionC)))
+		if (controller->at(Key::ActionC))
 		{
 		}
-		if (glfwGetKey(window.get(), option->keyMap.at(Key::ActionD)))
+		if (controller->at(Key::ActionD))
 		{
 		}
 	}

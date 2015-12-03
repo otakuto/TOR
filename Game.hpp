@@ -10,6 +10,9 @@
 #include "Option.hpp"
 #include "Enemy.hpp"
 #include "Controller.hpp"
+#include "LocalController.hpp"
+#include "NetworkController.hpp"
+#include "Server.hpp"
 
 class Game
 {
@@ -21,10 +24,16 @@ public:
 	:
 	gameObjectlist(std::make_shared<std::list<std::shared_ptr<GameObject>>>())
 	{
-		auto controller = std::make_shared<Controller>(window, std::make_shared<Option>());
-		gameObjectlist->emplace_back(controller);
-		auto player = std::make_shared<Player>(gameObjectlist, controller);
+		auto localController = std::make_shared<LocalController>(window, std::make_shared<Option>());
+		gameObjectlist->emplace_back(localController);
+		auto netController = std::make_shared<NetworkController>();
+		auto server = std::make_shared<Server>(localController, netController);
+		gameObjectlist->emplace_back(server);
+
+		auto player = std::make_shared<Player>(gameObjectlist, localController);
 		gameObjectlist->emplace_back(player);
+		auto player1 = std::make_shared<Player>(gameObjectlist, netController);
+		gameObjectlist->emplace_back(player1);
 		gameObjectlist->emplace_back(std::make_shared<Enemy>(gameObjectlist, Eigen::Vector3d(0, 0, 0), [](auto & yield, Enemy & enemy)
 		{
 			while (true)

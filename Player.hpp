@@ -20,6 +20,7 @@ public:
 	std::shared_ptr<Controller> controller;
 	Eigen::Vector3d position;
 	int hp;
+	int hpMax;
 	int level;
 	int speed;
 	int jumpTime;
@@ -34,7 +35,8 @@ public:
 	gameObjectlist(gameObjectlist),
 	controller(controller),
 	position(0, 0, 0),
-	hp(),
+	hp(27),
+	hpMax(32),
 	level(),
 	speed(2),
 	jumpTime(1),

@@ -13,6 +13,7 @@
 #include "LocalController.hpp"
 #include "NetworkController.hpp"
 #include "Server.hpp"
+#include "HeadUpDisplay.hpp"
 
 class Game
 {
@@ -32,6 +33,7 @@ public:
 
 		auto player = std::make_shared<Player>(gameObjectlist, localController);
 		gameObjectlist->emplace_back(player);
+		gameObjectlist->emplace_back(std::make_shared<HeadUpDisplay>(window, player));
 		auto player1 = std::make_shared<Player>(gameObjectlist, netController);
 		gameObjectlist->emplace_back(player1);
 		gameObjectlist->emplace_back(std::make_shared<Enemy>(gameObjectlist, Eigen::Vector3d(0, 0, 0), [](auto & yield, Enemy & enemy)

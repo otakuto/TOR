@@ -39,8 +39,8 @@ public:
 	:
 	io_service(),
 	streambuf(),
-	//socket(io_service, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 14514)),
-	socket(io_service, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 14515)),
+	socket(io_service, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 14514)),
+	//socket(io_service, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 14515)),
 	localController(localController),
 	networkController(networkController),
 	mb(streambuf.prepare(512))

@@ -18,11 +18,13 @@
 class Game
 {
 private:
+	int time;
 	std::shared_ptr<std::list<std::shared_ptr<GameObject>>> gameObjectlist;
 
 public:
 	Game(std::shared_ptr<GLFWwindow> window)
 	:
+	time(0),
 	gameObjectlist(std::make_shared<std::list<std::shared_ptr<GameObject>>>())
 	{
 		auto localController = std::make_shared<LocalController>(window, std::make_shared<Option>());
@@ -31,10 +33,10 @@ public:
 		auto server = std::make_shared<Server>(localController, netController);
 		gameObjectlist->emplace_back(server);
 
-		auto player = std::make_shared<Player>(gameObjectlist, localController);
+		auto player = std::make_shared<Player>(time, gameObjectlist, localController);
 		gameObjectlist->emplace_back(player);
 		gameObjectlist->emplace_back(std::make_shared<HeadUpDisplay>(window, player));
-		auto player1 = std::make_shared<Player>(gameObjectlist, netController);
+		auto player1 = std::make_shared<Player>(time, gameObjectlist, netController);
 		gameObjectlist->emplace_back(player1);
 		gameObjectlist->emplace_back(std::make_shared<Enemy>(gameObjectlist, Eigen::Vector3d(0, 0, 0), [](auto & yield, Enemy & enemy)
 		{
@@ -108,6 +110,7 @@ public:
 
 	void run()
 	{
+		++time;
 		for (auto e = gameObjectlist->begin(); e != gameObjectlist->end();)
 		{
 			if ((*e)->enable)
